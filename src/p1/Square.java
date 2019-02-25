@@ -6,18 +6,9 @@ package p1;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
-
-import java.io.File;
 import java.io.Serializable;
-
-import javafx.event.EventHandler;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.effect.Glow;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.animation.FillTransition;
 
 /**
@@ -37,7 +28,7 @@ public class Square extends Pane implements Serializable {
 	private int squareColumn;
 	private int squareRow;
 	private boolean moveSelected;
-	private boolean kingCantMove;
+	//private boolean kingCantMove;
 
 	/**
 	 * Constructs a Square on the chess board.
@@ -53,7 +44,7 @@ public class Square extends Pane implements Serializable {
 		squareRow = row;
 		color = c;
 		moveSelected = false;
-		kingCantMove = false;
+		//kingCantMove = false;
 
 		r = new Rectangle(xPos, yPos, width, height);
 		r.setStrokeType(StrokeType.INSIDE);
@@ -110,7 +101,7 @@ public class Square extends Pane implements Serializable {
 	public void moveSelected() {
 		r.setFill(Color.SLATEGRAY);
 		moveSelected = true;
-		kingCantMove = true;
+		//kingCantMove = true;
 	}
 
 	/**
@@ -120,7 +111,7 @@ public class Square extends Pane implements Serializable {
 	public void captureSelected() {
 		r.setFill(Color.LIGHTSALMON);
 		moveSelected = true;
-		kingCantMove = true;
+		//kingCantMove = true;
 	}
 
 	/**
@@ -147,7 +138,7 @@ public class Square extends Pane implements Serializable {
 		r.setFill(color);
 		r.setStroke(color);
 		moveSelected = false;
-		kingCantMove = false;
+		// kingCantMove = false;
 		// kingSelected = false;
 	}
 
@@ -230,17 +221,17 @@ public class Square extends Pane implements Serializable {
 	 * Returns whether the square is valid for the king and not under threat.
 	 * @return value of kingCantMove
 	 */
-	public boolean getKingCantMove() {
-		return kingCantMove;
-	}
+//	public boolean getKingCantMove() {
+//		return kingCantMove;
+//	}
 
 	/**
 	 * Sets whether the square is valid for the king and not under threat.
 	 * @param value of kingCantMove
 	 */
-	public void setKingCantMove(boolean newValue) {
-		kingCantMove = newValue;
-	}
+//	public void setKingCantMove(boolean newValue) {
+//		kingCantMove = newValue;
+//	}
 	
 	/**
 	 * Sets the current state of the square, empty(0), occupied by p1(1), occupied

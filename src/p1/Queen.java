@@ -190,13 +190,10 @@ public class Queen extends Piece implements Serializable {
 		if (myChessBoard[row][col].getPiece() == null) {
 			myChessBoard[row][col].moveSelected();
 		} else if (myChessBoard[row][col].getPiece().getPlayer() == this.getPlayer()) {
-			myChessBoard[row][col].setKingCantMove(true);
 			notBlocked = false;
 		} else if (myChessBoard[row][col].getPiece().getPlayer() != this.getPlayer()) {
 			myChessBoard[row][col].captureSelected();
-			if (!(myChessBoard[row][col].getPiece().getPieceName() == "King")) {
-				notBlocked = false;
-			}
+			notBlocked = false;
 		}
 	}
 }

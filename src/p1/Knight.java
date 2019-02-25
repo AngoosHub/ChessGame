@@ -81,6 +81,7 @@ public class Knight extends Piece implements Serializable {
 		int y;
 		int x;
 		
+		
 		// Vertical Down-Left check
 		y = row;
 		x = col;
@@ -206,7 +207,7 @@ public class Knight extends Piece implements Serializable {
 		if (myChessBoard[row][col].getPiece() == null) {
 			myChessBoard[row][col].moveSelected();
 		} else if (myChessBoard[row][col].getPiece().getPlayer() == this.getPlayer()) {
-			myChessBoard[row][col].setKingCantMove(true);
+			
 
 		} else if (myChessBoard[row][col].getPiece().getPlayer() != this.getPlayer()) {
 			myChessBoard[row][col].captureSelected();

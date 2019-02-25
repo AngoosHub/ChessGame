@@ -4,8 +4,6 @@
 package p1;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**Player is able to build each of the pieces in chess and assign ownership to its pieces.
  * @author anguslin
@@ -14,19 +12,14 @@ import java.util.List;
 public class Player implements Serializable {
 	// 1 is player, 2 is player, 0 for none??
 	private int player;
-	private GUI gui;
-	private List<Piece> pieceArray;
 	
 	/**
 	 * The constructor builds a player
 	 * @param setPlayer
 	 * @param myGUI
 	 */
-	public Player(int setPlayer, GUI myGUI) {
+	public Player(int setPlayer) {
 		player = setPlayer;
-		gui = myGUI;
-		pieceArray = new ArrayList<Piece>();
-//		buildPieceArray();
 		
 	}
 	
@@ -37,19 +30,6 @@ public class Player implements Serializable {
 	public int getPlayer() {
 		return player;
 	}
-	
-//	private void buildPieceArray() {
-//		for (int i = 0; i < 8; i++) {
-//			buildPawn();
-//		}
-//		for (int i = 0; i < 2; i++) {
-//			buildKnight();
-//			buildBishop();
-//			buildRook();
-//		}
-//		buildQueen();
-//		buildKing();
-//	}
 	
 	/**
 	 * Makes a Pawn.
@@ -101,7 +81,7 @@ public class Player implements Serializable {
 	 * @return the King.
 	 */
 	public Piece buildKing() {
-		King king = new King(player, gui.getCurrentPlayer());
+		King king = new King(player);
 		return king;
 	}
 	

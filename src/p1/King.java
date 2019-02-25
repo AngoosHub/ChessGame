@@ -19,18 +19,17 @@ public class King extends Piece implements Serializable {
 	private URL url;
 	private int count;
 	private Square[][] myChessBoard;
-	private int currentPlayer;
+	//private int currentPlayer;
 	
 	/**
 	 * Constructor for King piece.
 	 * @param playerNum owner of the piece.
 	 */
-	public King(int playerNum, int theCurrentPlayer) {
+	public King(int playerNum) {
 		pieceName = "King";
 		player = playerNum;
 		getFile();
 		createPiece();
-		currentPlayer = theCurrentPlayer;
 	}
 	
 	/**
@@ -196,23 +195,22 @@ public class King extends Piece implements Serializable {
 	 */
 	public void checkSquare(int row, int col) {
 		if (myChessBoard[row][col].getPiece() == null) {
-			//compare to current player?
-			if (!myChessBoard[row][col].getKingCantMove()) {
-				myChessBoard[row][col].moveSelected();
-			}
-			if (player != currentPlayer) {
-				myChessBoard[row][col].setKingCantMove(false);
-			}
+			myChessBoard[row][col].moveSelected();
+//			if (!myChessBoard[row][col].getKingCantMove()) {
+//				myChessBoard[row][col].moveSelected();
+//			}
+//			if (player != currentPlayer) {
+//				myChessBoard[row][col].setKingCantMove(false);
+//			}
 			
 		} else if (myChessBoard[row][col].getPiece().getPlayer() == this.getPlayer()) {
-			myChessBoard[row][col].setKingCantMove(true);
+			//myChessBoard[row][col].setKingCantMove(true);
 			
-		} else if (myChessBoard[row][col].getPiece().getPlayer() != this.getPlayer()
-				&& !myChessBoard[row][col].getKingCantMove()) {
+		} else if (myChessBoard[row][col].getPiece().getPlayer() != this.getPlayer()) {
 			myChessBoard[row][col].captureSelected();
-			if (player != currentPlayer) {
-				myChessBoard[row][col].setKingCantMove(false);
-			}
+//			if (player != currentPlayer) {
+//				myChessBoard[row][col].setKingCantMove(false);
+//			}
 		}
 	}
 }

@@ -3,24 +3,11 @@
  */
 package p1;
 
-import javafx.event.*;
-import javafx.scene.paint.*;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.control.*;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TextInputDialog;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -29,14 +16,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.nio.file.Paths;
 import java.io.ObjectOutputStream;
-import java.util.Optional;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.application.Application;
-import javafx.beans.binding.Bindings;
-import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -53,7 +33,7 @@ import javafx.stage.FileChooser;
  * @version 2019
  *
  */
-public class GUI extends Application implements Serializable {
+public class GUI extends Application {
 	/* 
 	 * To-Do List:
 	 * - Castle king with rook, black and white both king and queen side.
@@ -66,19 +46,13 @@ public class GUI extends Application implements Serializable {
 	 */
 	
 	private GridPane gridPane;
-	private Canvas canvas;
-	private static Stage window;
-	private Square[][] chessBoard;
-	private Player player1;
-	private Player player2;
-	private Color color;
-	private Rule rule;
+	private ChessBoard chessBoard;
 	private BorderPane root;
 	private MenuBar menuBar;
 	private VBox vBox;
 	private Label currentTurn;
-	private int[][] tempBoard;
-	private int currentPlayer;
+	//private int[][] tempBoard;
+	private SavedBoard savedBoard;
 	
 
 	/**
@@ -91,13 +65,7 @@ public class GUI extends Application implements Serializable {
 		root = new BorderPane();
 		gridPane = new GridPane();
 		gridPane.setMaxSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
-		window = primaryStage;
-		chessBoard = new Square[8][8];
-		player1 = new Player(1, this);
-		player2 = new Player(2, this);
-		currentPlayer = player1.getPlayer();
-		rule = new Rule(this, chessBoard, player1.getPlayer(), player2.getPlayer(), currentPlayer);
-		tempBoard = new int[8][8];
+		chessBoard = new ChessBoard(this);
 		
 		
 		createMenu(primaryStage);
@@ -109,62 +77,14 @@ public class GUI extends Application implements Serializable {
 	}
 	
 	/**
-	 * Builds each square of the board and assigns them into an 8 by 8 grid, and interact
-	 * when clicked by running through rule class for the correct action.
+	 * Generates the a physical representation of the board by attaching the Squares
+	 * in ChessBoard class to the correct coordinate on gridpane.
 	 */
-	public void generateBoard() { 
-		int xPos = 0;
-		int yPos = 0;
-		final int width = 100;
-		final int height = 100;
-		color = Color.BEIGE;
+	public void generateBoard() {
 		for (int y = 0; y < 8; y++) {
 			for (int x = 0; x < 8; x++) {
-				Square square = new Square(chessBoard, xPos, yPos, width, height, color, x, y);
-				//xPos += 100;
-				swapBoardColor();
-				square.setPrefSize(100, 100);
-				square.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-					public void handle(MouseEvent mouseEvent) {
-						rule.runRule(square.getSquareRow(), square.getSquareColumn());
-					} 
-				});
-				//root.getChildren().add(square);
-				Piece newPiece = generatePiece(y, x);
-				square.setPiece(newPiece);
-				chessBoard[y][x] = square;
-				gridPane.add(chessBoard[y][x], x, y);
+				gridPane.add(chessBoard.getBoard()[y][x], x, y);
 			}
-			swapBoardColor();
-			//xPos = 0;
-			//yPos += 100;
-		}
-	}
-	
-	/**
-	 * Creates a pieces for the square based on player number.
-	 * @param row of square to make piece
-	 * @param col of square to make piece
-	 * @return
-	 */
-	public Piece generatePiece(int row, int col) {
-		Piece piece = null;
-		if (row < 2) {
-			return player2.generatePiece(row, col);
-		} else if (row > 5) {
-			return player1.generatePiece(row, col);
-		}
-		return piece;
-	}
-	
-	/**
-	 * Alters the color to make a checkboard pattern.
-	 */
-	private void swapBoardColor() {
-		if (color == Color.BEIGE) {
-			color = Color.DIMGRAY;
-		} else {
-			color = Color.BEIGE;
 		}
 	}
 	
@@ -179,6 +99,10 @@ public class GUI extends Application implements Serializable {
 			currentTurn.setText("White's Turn");
 			currentTurn.setStyle("-fx-text-fill: black; -fx-background-color: white;");
 		}
+	}
+	
+	public String getCurrentTurn() {
+		return currentTurn.getText();
 	}
 	
 	/**
@@ -199,10 +123,10 @@ public class GUI extends Application implements Serializable {
 		MenuItem save = new MenuItem("Save");
 		save.setOnAction(e -> {
 			try {
-				codeChessBoard();
-				FileOutputStream file = new FileOutputStream("tempBoard");
+				savedBoard = new SavedBoard(chessBoard);
+				FileOutputStream file = new FileOutputStream("SavedGame");
 				ObjectOutputStream out = new ObjectOutputStream(file);
-				out.writeObject(tempBoard);
+				out.writeObject(savedBoard);
 				out.flush();
 				out.close();
 				file.close();
@@ -223,8 +147,9 @@ public class GUI extends Application implements Serializable {
 				
 				FileInputStream inputFile = new FileInputStream(selectedFile);
 				ObjectInputStream in = new ObjectInputStream(inputFile);
-				tempBoard = (int[][]) in.readObject();
-				processChessBoard();
+				savedBoard = (SavedBoard) in.readObject();
+				clearBoard();
+				savedBoard.processChessBoard(chessBoard);
 				in.close();
 				inputFile.close();
 				
@@ -246,89 +171,90 @@ public class GUI extends Application implements Serializable {
 	 * 2-D int array. 
 	 * @return the coded chess board
 	 */
-	private int[][] codeChessBoard() {
-		for (int y = 0; y < chessBoard.length; y++) {
-			for (int x = 0; x < chessBoard[y].length; x++) {
-				if (chessBoard[y][x].getPiece() == null) {
-					tempBoard[y][x] = 0;
-				} else {
-					if (chessBoard[y][x].getPiece().getPlayer() == 1) {
-						tempBoard[y][x] = 10;
-					} else {
-						tempBoard[y][x] = 20;
-					}
-					
-					if (chessBoard[y][x].getPiece().getPieceName() == "Pawn") {
-						tempBoard[y][x] += 1;
-					} else if (chessBoard[y][x].getPiece().getPieceName() == "Knight") {
-						tempBoard[y][x] += 2;
-					} else if (chessBoard[y][x].getPiece().getPieceName() == "Bishop") {
-						tempBoard[y][x] += 3;
-					} else if (chessBoard[y][x].getPiece().getPieceName() == "Rook") {
-						tempBoard[y][x] += 4;
-					} else if (chessBoard[y][x].getPiece().getPieceName() == "Queen") {
-						tempBoard[y][x] += 5;
-					} else if (chessBoard[y][x].getPiece().getPieceName() == "King") {
-						tempBoard[y][x] += 6;
-					} else {
-						tempBoard[y][x] = 0;
-					}
-						
-				}
-			}
-		}
-		
-		return tempBoard;
-	}
+//	private int[][] codeChessBoard() {
+//		for (int y = 0; y < chessBoard.getBoard().length; y++) {
+//			for (int x = 0; x < chessBoard.getBoard()[y].length; x++) {
+//				if (chessBoard.getBoard()[y][x].getPiece() == null) {
+//					tempBoard[y][x] = 0;
+//				} else {
+//					if (chessBoard.getBoard()[y][x].getPiece().getPlayer() == 1) {
+//						tempBoard[y][x] = 10;
+//					} else {
+//						tempBoard[y][x] = 20;
+//					}
+//					
+//					if (chessBoard.getBoard()[y][x].getPiece().getPieceName() == "Pawn") {
+//						tempBoard[y][x] += 1;
+//					} else if (chessBoard.getBoard()[y][x].getPiece().getPieceName() == "Knight") {
+//						tempBoard[y][x] += 2;
+//					} else if (chessBoard.getBoard()[y][x].getPiece().getPieceName() == "Bishop") {
+//						tempBoard[y][x] += 3;
+//					} else if (chessBoard.getBoard()[y][x].getPiece().getPieceName() == "Rook") {
+//						tempBoard[y][x] += 4;
+//					} else if (chessBoard.getBoard()[y][x].getPiece().getPieceName() == "Queen") {
+//						tempBoard[y][x] += 5;
+//					} else if (chessBoard.getBoard()[y][x].getPiece().getPieceName() == "King") {
+//						tempBoard[y][x] += 6;
+//					} else {
+//						tempBoard[y][x] = 0;
+//					}
+//						
+//				}
+//			}
+//		}
+//		
+//		return tempBoard;
+//	}
 	
 	/**
 	 * Clears the current board, then processes the coded chess board and uses the numbers
 	 * to rebuild the correct pieces in the right location on the chess board.
 	 */
-	private void processChessBoard() {
-		int player = 0;
-		clearBoard();
-		for (int y = 0; y < tempBoard.length; y++) {
-			for (int x = 0; x < tempBoard[y].length; x++) {
-				if (tempBoard[y][x] == 0) {
-					chessBoard[y][x] = null;
-				} else {
-					if (tempBoard[y][x] < 20) {
-						player = 1;
-						tempBoard[y][x] -= 10;
-					} else {
-						player = 2;
-						tempBoard[y][x] -= 20;
-					}
-					
-					if (tempBoard[y][x] == 1) {
-						chessBoard[y][x].setPiece(new Pawn(player));
-					} else if (tempBoard[y][x] == 2) {
-						chessBoard[y][x].setPiece(new Knight(player));
-					} else if (tempBoard[y][x] == 3) {
-						chessBoard[y][x].setPiece(new Bishop(player));
-					} else if (tempBoard[y][x] == 4) {
-						chessBoard[y][x].setPiece(new Rook(player));
-					} else if (tempBoard[y][x] == 5) {
-						chessBoard[y][x].setPiece(new Queen(player));
-					} else if (tempBoard[y][x] == 6) {
-						chessBoard[y][x].setPiece(new King(player, currentPlayer));
-					} else {
-						chessBoard[y][x] = null;
-					}
-						
-				}
-			}
-		}
-	}
+//	private void processChessBoard() {
+//		int player = 0;
+//		clearBoard();
+//		for (int y = 0; y < tempBoard.length; y++) {
+//			for (int x = 0; x < tempBoard[y].length; x++) {
+//				if (tempBoard[y][x] == 0) {
+//					chessBoard.getBoard()[y][x].setPiece(null);
+//				} else {
+//					if (tempBoard[y][x] < 20) {
+//						player = 1;
+//						tempBoard[y][x] -= 10;
+//					} else {
+//						player = 2;
+//						tempBoard[y][x] -= 20;
+//					}
+//					
+//					if (tempBoard[y][x] == 1) {
+//						chessBoard.getBoard()[y][x].setPiece(new Pawn(player));
+//					} else if (tempBoard[y][x] == 2) {
+//						chessBoard.getBoard()[y][x].setPiece(new Knight(player));
+//					} else if (tempBoard[y][x] == 3) {
+//						chessBoard.getBoard()[y][x].setPiece(new Bishop(player));
+//					} else if (tempBoard[y][x] == 4) {
+//						chessBoard.getBoard()[y][x].setPiece(new Rook(player));
+//					} else if (tempBoard[y][x] == 5) {
+//						chessBoard.getBoard()[y][x].setPiece(new Queen(player));
+//					} else if (tempBoard[y][x] == 6) {
+//						chessBoard.getBoard()[y][x].setPiece(new King(player));
+//					} else {
+//						
+//					}
+//						
+//				}
+//			}
+//		}
+//	}
 	
 	/**
 	 * Empties the board of its current pieces.
 	 */
 	private void clearBoard() {
-		for (int y = 0; y < chessBoard.length; y++) {
-			for (int x = 0; x < chessBoard[y].length; x++) {
-				chessBoard[y][x].setPiece(null);
+		chessBoard.getRule().unselectAll();
+		for (int y = 0; y < chessBoard.getBoard().length; y++) {
+			for (int x = 0; x < chessBoard.getBoard()[y].length; x++) {
+				chessBoard.getBoard()[y][x].setPiece(null);
 			}
 		}
 	}
@@ -337,24 +263,24 @@ public class GUI extends Application implements Serializable {
 	 * Gets the player's who has the current turn.
 	 * @return number of current player
 	 */
-	public int getCurrentPlayer() {
-		return currentPlayer;
-	}
+//	public int getCurrentPlayer() {
+//		return currentPlayer;
+//	}
 	
 	/**
 	 * Ends the match and declare the winner.
 	 */
-	public void checkMate() {
-		if (currentPlayer == 1) {
-			currentTurn.setText("Black Wins!");
-			currentTurn.setStyle(" -fx-text-fill: white; -fx-background-color: black;");
-		} else {
-			currentTurn.setText("White Wins!");
-			currentTurn.setStyle(" -fx-text-fill: black; -fx-background-color: white;");
-		}
-		
-	}
-	
+//	public void checkMate() {
+//		if (currentPlayer == 1) {
+//			currentTurn.setText("Black Wins!");
+//			currentTurn.setStyle(" -fx-text-fill: white; -fx-background-color: black;");
+//		} else {
+//			currentTurn.setText("White Wins!");
+//			currentTurn.setStyle(" -fx-text-fill: black; -fx-background-color: white;");
+//		}
+//		
+//	}
+//	
 	/**
 	 * Launches the GUI.
 	 */

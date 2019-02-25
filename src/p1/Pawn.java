@@ -166,12 +166,8 @@ public class Pawn extends Piece implements Serializable {
 	 */
 	public void checkSquare(int row, int col) {
 		if (myChessBoard[row][col].getPiece() == null) {
-			if (myChessBoard[row][col].getKingCantMove()) {
-				myChessBoard[row][col].moveSelected();
-			} else {
-				myChessBoard[row][col].moveSelected();
-				myChessBoard[row][col].setKingCantMove(false);
-			}
+			myChessBoard[row][col].moveSelected();
+			
 		} else if (myChessBoard[row][col].getPiece().getPlayer() == this.getPlayer()) {
 
 		} else if (myChessBoard[row][col].getPiece().getPlayer() != this.getPlayer()) {
@@ -197,10 +193,10 @@ public class Pawn extends Piece implements Serializable {
 	 */
 	public void checkCapture(int row, int col) {
 		if (myChessBoard[row][col].getPiece() == null) {
-			myChessBoard[row][col].setKingCantMove(true);
+			
 
 		} else if (myChessBoard[row][col].getPiece().getPlayer() == this.getPlayer()) {
-			myChessBoard[row][col].setKingCantMove(true);
+			
 
 		} else if (myChessBoard[row][col].getPiece().getPlayer() != this.getPlayer()) {
 			myChessBoard[row][col].captureSelected();

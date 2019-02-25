@@ -3,12 +3,8 @@
  */
 package p1;
 
-import javafx.scene.layout.GridPane;
-
 import java.io.Serializable;
 
-import javafx.scene.Node;
-import javafx.scene.layout.Pane;
 
 /**
  * The Rule class manges all the interactions between squares and pieces when
@@ -19,8 +15,9 @@ import javafx.scene.layout.Pane;
  *
  */
 public class Rule implements Serializable {
-	private GUI gui;
-	private Square[][] myChessBoard;
+	//private GUI gui;
+	private ChessBoard chessBoard;
+	//private Square[][] myChessBoard;
 	private Square currentSquare;
 	private int player1;
 	private int player2;
@@ -33,14 +30,14 @@ public class Rule implements Serializable {
 	 * 
 	 * @param chessBoard the 2-D array of squares representing chess board
 	 */
-	public Rule(GUI myGUI, Square[][] chessBoard, int p1, int p2, int theCurrentPlayer) {
-		gui = myGUI;
-		myChessBoard = chessBoard;
+	public Rule(ChessBoard theChessBoard, int p1, int p2) {
+		//gui = myGUI;
+		chessBoard = theChessBoard;
 		currentSquare = null;
 		player1 = p1;
 		player2 = p2;
-		currentPlayer = theCurrentPlayer;
 		kingChecked = false;
+		currentPlayer = theChessBoard.getCurrentPlayer().getPlayer();
 	}
 
 	/**
@@ -51,7 +48,7 @@ public class Rule implements Serializable {
 	 * @param col of the square to interact
 	 */
 	public void runRule(int row, int col) {
-		Square newSquare = getSquareByRowColumn(myChessBoard, row, col);
+		Square newSquare = chessBoard.getSquare(row, col);
 		/* If the king is checked, force king to make a valid move */
 //		if (kingChecked) {
 //			if (newSquare.getMoveSelected()) {
@@ -122,34 +119,13 @@ public class Rule implements Serializable {
 	}
 
 	/**
-	 * Finds and retrieves the Square at the coordinates given.
-	 * 
-	 * @param chessBoard the 2D array of squares
-	 * @param row        the y coordinate of square
-	 * @param col        the x coordinate of square
-	 * @return
-	 */
-	public Square getSquareByRowColumn(final Square[][] chessBoard, final int row, final int col) {
-
-		for (Square[] squareY : chessBoard) {
-			for (Square squareX : squareY) {
-				if (squareX.getSquareRow() == row && squareX.getSquareColumn() == col) {
-					return squareX;
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * shows the valid moves for the piece.
 	 * 
 	 * @param row of square who's piece to check
 	 * @param col of square who's piece to check
 	 */
 	public void showValidMoves(Square square, int row, int col) {
-		// currentSquare.getPiece().validMove(myChessBoard, row, col);
-		square.getPiece().validMove(myChessBoard, row, col);
+		square.getPiece().validMove(chessBoard.getBoard(), row, col);
 	}
 
 	/**
@@ -166,18 +142,18 @@ public class Rule implements Serializable {
 		} else {
 			currentPlayer = player1;
 		}
-		gui.changeTurn();
+		chessBoard.changeCurrentPlayer();
 		allDangerousSquares();
-		if (checkKing()) {
-			unselectAll();
-		}
+//		if (checkKing()) {
+//			unselectAll();
+//		}
 	}
 
 	/**
 	 * Unselects all squares and resets their select state.
 	 */
 	public void unselectAll() {
-		for (Square[] squareY : myChessBoard) {
+		for (Square[] squareY : chessBoard.getBoard()) {
 			for (Square squareX : squareY) {
 				squareX.resetSelected();
 			}
@@ -189,7 +165,7 @@ public class Rule implements Serializable {
 	 * keeping values to prevent king's movement.
 	 */
 	public void checkUnselectAll() {
-		for (Square[] squareY : myChessBoard) {
+		for (Square[] squareY : chessBoard.getBoard()) {
 			for (Square squareX : squareY) {
 				squareX.checkResetSelected();
 			}
@@ -201,11 +177,11 @@ public class Rule implements Serializable {
 	 * current player king cannot move.
 	 */
 	public void allDangerousSquares() {
-		for (int y = 0; y < myChessBoard.length; y++) {
-			for (int x = 0; x < myChessBoard[y].length; x++) {
-				if (myChessBoard[y][x].getPiece() != null
-						&& myChessBoard[y][x].getPiece().getPlayer() != currentPlayer) {
-					showValidMoves(myChessBoard[y][x], y, x);
+		for (int y = 0; y < chessBoard.getBoard().length; y++) {
+			for (int x = 0; x < chessBoard.getBoard()[y].length; x++) {
+				if (chessBoard.getBoard()[y][x].getPiece() != null
+						&& chessBoard.getBoard()[y][x].getPiece().getPlayer() != currentPlayer) {
+					showValidMoves(chessBoard.getBoard()[y][x], y, x);
 				}
 			}
 		}
@@ -215,44 +191,44 @@ public class Rule implements Serializable {
 	/**
 	 * Checks if the current player's king is currently checked and must be moved.
 	 */
-	public boolean checkKing() {
-		boolean safe = true;
-		for (Square[] squareY : myChessBoard) {
-			for (Square squareX : squareY) {
-				if (squareX.getPiece() != null && squareX.getPiece().getPieceName() == "King"
-						&& squareX.getPiece().getPlayer() == currentPlayer) {
-					if (squareX.getKingCantMove()) {
-						squareX.kingWarningSelected();
-						currentSquare = squareX;
-						showValidMoves(currentSquare, currentSquare.getSquareRow(), currentSquare.getSquareColumn());
-						kingChecked = true;
-						safe = false;
-						checkCheckMate();
-					}
-				}
-			}
-		}
-		return safe;
-	}
+//	public boolean checkKing() {
+//		boolean safe = true;
+//		for (Square[] squareY : myChessBoard) {
+//			for (Square squareX : squareY) {
+//				if (squareX.getPiece() != null && squareX.getPiece().getPieceName() == "King"
+//						&& squareX.getPiece().getPlayer() == currentPlayer) {
+//					if (squareX.getKingCantMove()) {
+//						squareX.kingWarningSelected();
+//						currentSquare = squareX;
+//						showValidMoves(currentSquare, currentSquare.getSquareRow(), currentSquare.getSquareColumn());
+//						kingChecked = true;
+//						safe = false;
+//						checkCheckMate();
+//					}
+//				}
+//			}
+//		}
+//		return safe;
+//	}
 
 	/**
 	 * Checks if the king has any valid spots to move to on the board, if there is
 	 * none, declare checkmate.
 	 */
-	public void checkCheckMate() {
-		boolean moveFound = false;
-		for (Square[] squareY : myChessBoard) {
-			for (Square squareX : squareY) {
-				if (squareX.getMoveSelected()) {
-					moveFound = true;
-				}
-			}
-		}
-		if (!moveFound) {
-			gui.checkMate();
-		} else {
-			unselectAll();
-		}
-	}
+//	public void checkCheckMate() {
+//		boolean moveFound = false;
+//		for (Square[] squareY : myChessBoard) {
+//			for (Square squareX : squareY) {
+//				if (squareX.getMoveSelected()) {
+//					moveFound = true;
+//				}
+//			}
+//		}
+//		if (!moveFound) {
+//			gui.checkMate();
+//		} else {
+//			unselectAll();
+//		}
+//	}
 
 }
