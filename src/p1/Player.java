@@ -3,13 +3,13 @@
  */
 package p1;
 
-import java.io.Serializable;
+
 
 /**Player is able to build each of the pieces in chess and assign ownership to its pieces.
  * @author anguslin
  *
  */
-public class Player implements Serializable {
+public class Player {
 	// 1 is player, 2 is player, 0 for none??
 	private int player;
 	

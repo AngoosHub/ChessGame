@@ -6,7 +6,6 @@ package p1;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
-import java.io.Serializable;
 import javafx.scene.paint.Color;
 import javafx.scene.layout.Pane;
 import javafx.animation.FillTransition;
@@ -19,7 +18,7 @@ import javafx.animation.FillTransition;
  * @author anguslin
  *
  */
-public class Square extends Pane implements Serializable {
+public class Square extends Pane {
 	private Rectangle r;
 	private int checkSquare = 0;
 	private Piece currentPiece;
@@ -51,13 +50,13 @@ public class Square extends Pane implements Serializable {
 		r.setStrokeWidth(10);
 		r.setStroke(color);
 		r.setFill(color);
-		Piece piece = new Piece();
+		Piece piece = null;
 		currentPiece = piece;
 		this.getChildren().add(r);
 		// this.getChildren().add(currentPiece);
 		// this.getChildren().add(image);
 	}
-
+	
 	/**
 	 * Returns data of the piece that currents occupies this square.
 	 * 

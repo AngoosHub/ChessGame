@@ -14,6 +14,11 @@ public class SavedBoard implements Serializable {
 	private int[][] tempBoard;
 	private int currentPlayer;
 	
+	/**
+	 * Takes in the current chessboard and saves the arrangement of pieces into number representatives
+	 * to be serialized for loading in the future.
+	 * @param chessBoard
+	 */
 	public SavedBoard(ChessBoard chessBoard) {
 		tempBoard = new int[8][8];
 		currentPlayer = chessBoard.getCurrentPlayer().getPlayer();
@@ -108,6 +113,10 @@ public class SavedBoard implements Serializable {
 		}
 	}
 	
+	/**
+	 * Returns the coded board.
+	 * @return
+	 */
 	public int[][] getTempBoard() {
 		return tempBoard;
 	}

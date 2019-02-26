@@ -4,7 +4,6 @@
 package p1;
 
 import java.io.File;
-import java.io.Serializable;
 import java.net.URL;
 
 import javafx.scene.image.Image;
@@ -13,7 +12,7 @@ import javafx.scene.image.Image;
  * @author anguslin
  *
  */
-public class Knight extends Piece implements Serializable {
+public class Knight extends Piece {
 	private String pieceName;
 	private int player;
 	private URL url;

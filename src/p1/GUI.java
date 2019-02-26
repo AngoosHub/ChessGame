@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.FileInputStream;
 import java.io.File;
-import java.io.Serializable;
 import java.nio.file.Paths;
 import java.io.ObjectOutputStream;
 import javafx.application.Application;
@@ -40,7 +39,7 @@ public class GUI extends Application {
 	 * - en passante with pawn when last move is a double
 	 * - Undo last move botton
 	 * - Promotion with pawn
-	 * - When check restrict moves to only those that protects king
+	 * DONE - When check restrict moves to only those that protects king
 	 * Far reaching goals:
 	 * - Play with computer, pick color, and have a basic AI
 	 */

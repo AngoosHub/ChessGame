@@ -3,7 +3,6 @@
  */
 package p1;
 
-import java.io.Serializable;
 
 
 /**
@@ -14,15 +13,12 @@ import java.io.Serializable;
  * @author anguslin
  *
  */
-public class Rule implements Serializable {
-	//private GUI gui;
+public class Rule {
 	private ChessBoard chessBoard;
-	//private Square[][] myChessBoard;
 	private Square currentSquare;
 	private int player1;
 	private int player2;
 	private int currentPlayer;
-	private boolean kingChecked;
 
 	/**
 	 * Constructor for Rule, takes in the array of chess board from GUI to keep
@@ -31,12 +27,10 @@ public class Rule implements Serializable {
 	 * @param chessBoard the 2-D array of squares representing chess board
 	 */
 	public Rule(ChessBoard theChessBoard, int p1, int p2) {
-		//gui = myGUI;
 		chessBoard = theChessBoard;
 		currentSquare = null;
 		player1 = p1;
 		player2 = p2;
-		kingChecked = false;
 		currentPlayer = theChessBoard.getCurrentPlayer().getPlayer();
 	}
 
@@ -49,16 +43,7 @@ public class Rule implements Serializable {
 	 */
 	public void runRule(int row, int col) {
 		Square newSquare = chessBoard.getSquare(row, col);
-		/* If the king is checked, force king to make a valid move */
-//		if (kingChecked) {
-//			if (newSquare.getMoveSelected()) {
-//				newSquare.setPiece(currentSquare.getPiece());
-//				currentSquare.setPiece(null);
-//				endAction();
-//			} else {
-//				newSquare.warningSelected();
-//			}
-//		} else 
+		
 		if (newSquare.getPiece() == null && currentSquare == null) {
 			/*
 			 * Do nothing as there is not piece to move.
@@ -69,11 +54,8 @@ public class Rule implements Serializable {
 			 */
 			if (newSquare.getPiece().getPlayer() == currentPlayer) {
 				currentSquare = newSquare;
-				if (newSquare.getPiece().getPieceName() == "King") {
-					allDangerousSquares();
-				}
 				currentSquare.clickSelected();
-				showValidMoves(currentSquare, currentSquare.getSquareRow(), currentSquare.getSquareColumn());
+				testValidMoves(currentSquare, currentSquare.getSquareRow(), currentSquare.getSquareColumn());
 			} else {
 				newSquare.warningSelected();
 			}
@@ -92,17 +74,13 @@ public class Rule implements Serializable {
 				 */
 				unselectAll();
 				currentSquare = newSquare;
-				if (newSquare.getPiece().getPieceName() == "King") {
-					allDangerousSquares();
-				}
 				currentSquare.clickSelected();
-				showValidMoves(currentSquare, currentSquare.getSquareRow(), currentSquare.getSquareColumn());
+				testValidMoves(currentSquare, currentSquare.getSquareRow(), currentSquare.getSquareColumn());
 			} else if (!newSquare.getMoveSelected()) {
 				newSquare.warningSelected();
 			} else if (newSquare.getPiece() == null) {
 				newSquare.setPiece(currentSquare.getPiece());
 				currentSquare.setPiece(null);
-				// unselectAll();
 				endAction();
 			} else if (newSquare.getPiece().getPlayer() != currentSquare.getPiece().getPlayer()) {
 				/*
@@ -112,7 +90,6 @@ public class Rule implements Serializable {
 				newSquare.setPiece(currentSquare.getPiece());
 				currentSquare.setPiece(null);
 				currentSquare = newSquare;
-				// unselectAll();
 				endAction();
 			}
 		}
@@ -127,6 +104,33 @@ public class Rule implements Serializable {
 	public void showValidMoves(Square square, int row, int col) {
 		square.getPiece().validMove(chessBoard.getBoard(), row, col);
 	}
+	
+	
+/**
+ * Creates a duplicate of the current chessboard to play the move and check if it
+ * is valid and won't endanger the king, if so restricts the move.
+ * @param square
+ * @param row
+ * @param col
+ */
+	public void testValidMoves(Square square, int row, int col) {
+		square.getPiece().validMove(chessBoard.getBoard(), row, col);
+		for (int y = 0; y < 8; y++) {
+			for (int x = 0; x < 8; x++) {
+				if (chessBoard.getBoard()[y][x].getMoveSelected()) {					
+					ChessBoard tempBoard = new ChessBoard(chessBoard);
+					tempBoard.getBoard()[y][x].setPiece(tempBoard.getBoard()[row][col].getPiece());
+					
+					tempBoard.getBoard()[row][col].setPiece(null);
+					boolean safe = tempBoard.getRule().checkKing();
+					if (!safe) {
+						chessBoard.getBoard()[y][x].resetSelected();
+					}
+				}
+			}
+		}
+	}
+	
 
 	/**
 	 * Sets currentSquare back to null to end this turn, select all the attacked
@@ -135,7 +139,6 @@ public class Rule implements Serializable {
 	 */
 	public void endAction() {
 		currentSquare = null;
-		kingChecked = false;
 		unselectAll();
 		if (currentPlayer == player1) {
 			currentPlayer = player2;
@@ -143,7 +146,7 @@ public class Rule implements Serializable {
 			currentPlayer = player1;
 		}
 		chessBoard.changeCurrentPlayer();
-		allDangerousSquares();
+//		allDangerousSquares();
 //		if (checkKing()) {
 //			unselectAll();
 //		}
@@ -161,32 +164,46 @@ public class Rule implements Serializable {
 	}
 
 	/**
-	 * Unselects all squares and resets some of their values to select state, but
-	 * keeping values to prevent king's movement.
-	 */
-	public void checkUnselectAll() {
-		for (Square[] squareY : chessBoard.getBoard()) {
-			for (Square squareX : squareY) {
-				squareX.checkResetSelected();
-			}
-		}
-	}
-
-	/**
 	 * Shows the attacked squares from each of the enemies' pieces to check if
 	 * current player king cannot move.
 	 */
-	public void allDangerousSquares() {
+	public boolean checkKing() {
+		Square king = null;
 		for (int y = 0; y < chessBoard.getBoard().length; y++) {
 			for (int x = 0; x < chessBoard.getBoard()[y].length; x++) {
-				if (chessBoard.getBoard()[y][x].getPiece() != null
-						&& chessBoard.getBoard()[y][x].getPiece().getPlayer() != currentPlayer) {
+				if (chessBoard.getBoard()[y][x].getPiece() == null) {
+					/* If no piece do nothing */
+				} else if (chessBoard.getBoard()[y][x].getPiece().getPlayer() != currentPlayer) {
 					showValidMoves(chessBoard.getBoard()[y][x], y, x);
+				} else if (chessBoard.getBoard()[y][x].getPiece().getPieceName().equals("King")
+						&& chessBoard.getBoard()[y][x].getPiece().getPlayer() == currentPlayer) {
+					king = chessBoard.getBoard()[y][x];
 				}
 			}
 		}
-		checkUnselectAll();
+		boolean safe = true;
+		if (king == null) {
+			System.out.println("Warning King is null!");
+		}
+		if (king != null && king.getMoveSelected()) {
+			king.kingWarningSelected();
+			safe = false;
+		}
+		//unselectAll();
+		return safe;
 	}
+	
+	/**
+	 * Unselects all squares and resets some of their values to select state, but
+	 * keeping values to prevent king's movement.
+	 */
+//	public void checkUnselectAll() {
+//		for (Square[] squareY : chessBoard.getBoard()) {
+//			for (Square squareX : squareY) {
+//				squareX.checkResetSelected();
+//			}
+//		}
+//	}
 
 	/**
 	 * Checks if the current player's king is currently checked and must be moved.

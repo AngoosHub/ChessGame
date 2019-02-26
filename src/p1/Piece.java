@@ -3,15 +3,10 @@
  */
 package p1;
 
-import java.io.InputStream;
-import java.io.Serializable;
-import java.net.URL;
 
+import java.net.URL;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.control.Button;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.*;
 import java.io.File;
 
 
@@ -19,7 +14,7 @@ import java.io.File;
  * @author anguslin
  *
  */
-public class Piece extends ImageView implements Serializable{
+public class Piece extends ImageView {
 	private String pieceName;
 	private int player;
 	private URL url;
