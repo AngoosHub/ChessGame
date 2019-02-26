@@ -105,9 +105,6 @@ public class Rule {
 		square.getPiece().validMove(chessBoard.getBoard(), row, col);
 	}
 	
-	//add in function to warn king at start of turn if check? or merge it into another function?
-	//king.kingWarningSelected();
-	
 /**
  * Creates a duplicate of the current chessboard to play the move and check if it
  * is valid and won't endanger the king, if so restricts the move.
@@ -148,10 +145,7 @@ public class Rule {
 			currentPlayer = player1;
 		}
 		chessBoard.changeCurrentPlayer();
-//		allDangerousSquares();
-//		if (checkKing()) {
-//			unselectAll();
-//		}
+		checkKing();
 	}
 
 	/**
@@ -176,7 +170,16 @@ public class Rule {
 				if (chessBoard.getBoard()[y][x].getPiece() == null) {
 					/* If no piece do nothing */
 				} else if (chessBoard.getBoard()[y][x].getPiece().getPlayer() != currentPlayer) {
-					showValidMoves(chessBoard.getBoard()[y][x], y, x);
+					if (chessBoard.getBoard()[y][x].getPiece().getPieceName().equals("Pawn")) {
+						int otherPlayer = 1;
+						if (otherPlayer == currentPlayer) {
+							otherPlayer = 2;
+						}
+						Pawn pawn = new Pawn(otherPlayer, "test");
+						pawn.validPawnCapture(chessBoard.getBoard(), y, x);
+					} else {
+						showValidMoves(chessBoard.getBoard()[y][x], y, x);
+					}
 				} else if (chessBoard.getBoard()[y][x].getPiece().getPieceName().equals("King")
 						&& chessBoard.getBoard()[y][x].getPiece().getPlayer() == currentPlayer) {
 					king = chessBoard.getBoard()[y][x];
@@ -188,9 +191,12 @@ public class Rule {
 			System.out.println("Warning King is null!");
 		}
 		if (king != null && king.getMoveSelected()) {
+			unselectAll();
+			king.kingWarningSelected();
 			safe = false;
+		} else {
+			unselectAll();
 		}
-		//unselectAll();
 		return safe;
 	}
 	

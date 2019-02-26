@@ -212,4 +212,119 @@ public class Pawn extends Piece {
 		}
 
 	}
+	
+	/**
+	 * **Capture only version to use with check testing**
+	 * Checks the valid moves allowed to this piece. Makes sure the piece is not
+	 * blocked by and ally and cannot move through pieces.
+	 * 
+	 * @param chessBoard the current arrangement of the board
+	 * @param row        of the square the piece is on
+	 * @param col        of the square the piece is on
+	 */
+	public void validPawnCapture(Square[][] chessBoard, int row, int col) {
+		if (getPlayer() == 2) {
+			blackPawnCapture(chessBoard, row, col);
+		} else {
+			whitePawnCapture(chessBoard, row, col);
+		}
+	}
+	
+	/**
+	 * **Capture only version to use with check testing**
+	 * Validates the moves and capture for the white pawn, including diagonal
+	 * capture.
+	 * 
+	 * @param chessBoard current state of board
+	 * @param row        of the square
+	 * @param col        of the square
+	 */
+	public void whitePawnCapture(Square[][] chessBoard, int row, int col) {
+		myChessBoard = chessBoard;
+		int y = row;
+		int x = col;
+		//int check = 0;
+		if (row != 0) {
+//			if (y == 6) {
+//				while (y > 4 && x < 8 && check == 0) {
+//					y--;
+//					checkSquare(y, x);
+//				}
+//			} else {
+//				y--;
+//				checkSquare(y, x);
+//			}
+			if (row > 0 && col < 7 && col >= 0) {
+				y = row - 1;
+				x = col + 1;
+				checkPawnCapture(y, x);
+			}
+			if (row > 0 && col < 8 && col > 0) {
+				y = row - 1;
+				x = col - 1;
+				checkPawnCapture(y, x);
+			}
+		}
+
+	}
+	
+	/**
+	 * **Capture only version to use with check testing**
+	 * Validates the moves and capture for the black pawn, including diagonal
+	 * capture.
+	 * 
+	 * @param chessBoard current state of board
+	 * @param row        of the square
+	 * @param col        of the square
+	 */
+	public void blackPawnCapture(Square[][] chessBoard, int row, int col) {
+		myChessBoard = chessBoard;
+		int y = row;
+		int x = col;
+		//int check = 0;
+		if (row != 7) {
+//			if (y == 1) {
+//				while (y < 3 && x < 8 && check == 0) {
+//					y++;
+//					checkSquare(y, x);
+//				}
+//			} else {
+//				y++;
+//				checkSquare(y, x);
+//			}
+			if (row < 7 && col < 7 && col >= 0) {
+				y = row + 1;
+				x = col + 1;
+				checkPawnCapture(y, x);
+			}
+			if (row < 7 && col < 8 && col > 0) {
+				y = row + 1;
+				x = col - 1;
+				checkPawnCapture(y, x);
+			}
+		}
+
+	}
+	
+	/**
+	 * **Capture only version to use with check testing**
+	 * Compares the new square's piece with the old square piece and checks if its a
+	 * valid move.
+	 * 
+	 * @param row of square to check
+	 * @param col of square to check
+	 */
+	public void checkPawnCapture(int row, int col) {
+		if (myChessBoard[row][col].getPiece() == null) {
+			myChessBoard[row][col].captureSelected();
+
+		} else if (myChessBoard[row][col].getPiece().getPlayer() == this.getPlayer()) {
+			
+
+		} else if (myChessBoard[row][col].getPiece().getPlayer() != this.getPlayer()) {
+			myChessBoard[row][col].captureSelected();
+		}
+
+	}
+	
 }
