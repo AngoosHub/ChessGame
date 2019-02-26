@@ -32,6 +32,16 @@ public class King extends Piece {
 	}
 	
 	/**
+	 * Creates a test version of the piece skipping processing image file.
+	 * @param playerNum
+	 * @param test
+	 */
+	public King(int playerNum, String test) {
+		pieceName = "King";
+		player = playerNum;
+	}
+	
+	/**
 	 * Builds the piece using a chess image.
 	 */
 	public void createPiece() {

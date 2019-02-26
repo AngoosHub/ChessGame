@@ -30,6 +30,14 @@ public class Piece extends ImageView {
 	}
 	
 	/**
+	 * creates a testing version of the piece with no png image to save memory space.
+	 * @param test
+	 */
+	public Piece(String test) {
+		
+	}
+	
+	/**
 	 * Builds the piece using a chess image.
 	 */
 	public void createPiece() {

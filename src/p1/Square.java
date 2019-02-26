@@ -86,6 +86,19 @@ public class Square extends Pane {
 			currentPiece = newPiece;
 		}
 	}
+	
+	/**
+	 * The test version of setting up a piece, skipping the adding and removing from pane
+	 * functions as this board is never displayed.
+	 * @param newPiece
+	 */
+	public void setTestPiece(Piece newPiece) {
+		if (newPiece != null) {
+			currentPiece = newPiece;
+		} else {
+			currentPiece = null;
+		}
+	}
 
 	/**
 	 * Changes the border of the square to indicate its the current square selected.

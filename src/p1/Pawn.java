@@ -29,6 +29,16 @@ public class Pawn extends Piece {
 		getFile();
 		createPiece();
 	}
+	
+	/**
+	 * Creates a test version of the piece skipping processing image file.
+	 * @param playerNum
+	 * @param test
+	 */
+	public Pawn(int playerNum, String test) {
+		pieceName = "Pawn";
+		player = playerNum;
+	}
 
 	/**
 	 * Builds the piece using a chess image.

@@ -36,12 +36,49 @@ public class GUI extends Application {
 	/* 
 	 * To-Do List:
 	 * - Castle king with rook, black and white both king and queen side.
-	 * - en passante with pawn when last move is a double
+	 * - en passant with pawn when last move is a double
 	 * - Undo last move botton
 	 * - Promotion with pawn
 	 * DONE - When check restrict moves to only those that protects king
 	 * Far reaching goals:
 	 * - Play with computer, pick color, and have a basic AI
+	 */
+	
+	/*
+	 * Checking works but uses up too much memory...
+	 * Making multiple instances of chessboard with javafx and rectangle and png image is too memery heavy...
+	 * Try building pieces with no png first,
+	 * if still slow, as last resort build chess in 2D int array, with it own version of move check functions.
+	 */
+	
+	/*
+	 * Castling Plan:
+	 * King and Rook not moved yet, black and white, king and queen side castling
+	 * the space in between is clear and not threatened by enemies
+	 * king and rook move.
+	 */
+	
+	/*
+	 * En Passant plan:
+	 * Pawn on the 6th? 5th rank? check for black/white
+	 * The other pawns first move and on 5th rank? or Pawn makes a double move (y pos abs diff or 2)
+	 * then can special capture
+	 */
+	
+	/*
+	 * Undo last move plan:
+	 * Save a copy of the last chessboard, and if clicked, swap back to it.
+	 * Or save and array of boards as list of actions, each click goes back one
+	 * Can go forward?
+	 * If make move, then overwrite it and delete all future saved boards.
+	 */
+	
+	/*
+	 * Promotion plan:
+	 * add in a pop dialogue for choosing which piece to swap to.
+	 * then set in new piece in its place.
+	 * check if pawn is at final square at end action?
+	 * pop up has buttons with image of each piece, when click replaces pawn with that piece.
 	 */
 	
 	private GridPane gridPane;

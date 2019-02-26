@@ -30,6 +30,16 @@ public class Knight extends Piece {
 		getFile();
 		createPiece();
 	}
+	
+	/**
+	 * Creates a test version of the piece skipping processing image file.
+	 * @param playerNum
+	 * @param test
+	 */
+	public Knight(int playerNum, String test) {
+		pieceName = "Knight";
+		player = playerNum;
+	}
 
 	/**
 	 * Builds the piece using a chess image.

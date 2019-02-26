@@ -148,17 +148,17 @@ public class ChessBoard {
 		int playerNum = piece.getPlayer();
 		Piece copyPiece = null;
 		if (name.equals("Pawn")) {
-			copyPiece = new Pawn(playerNum);
+			copyPiece = new Pawn(playerNum, "test");
 		} else if (name.equals("Knight")) {
-			copyPiece = new Knight(playerNum);
+			copyPiece = new Knight(playerNum, "test");
 		} else if (name.equals("Rook")) {
-			copyPiece = new Rook(playerNum);
+			copyPiece = new Rook(playerNum, "test");
 		} else if (name.equals("Bishop")) {
-			copyPiece = new Bishop(playerNum);
+			copyPiece = new Bishop(playerNum, "test");
 		} else if (name.equals("Queen")) {
-			copyPiece = new Queen(playerNum);
+			copyPiece = new Queen(playerNum, "test");
 		} else if (name.equals("King")) {
-			copyPiece = new King(playerNum);
+			copyPiece = new King(playerNum, "test");
 		}
 		return copyPiece;
 	}

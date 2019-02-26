@@ -105,6 +105,8 @@ public class Rule {
 		square.getPiece().validMove(chessBoard.getBoard(), row, col);
 	}
 	
+	//add in function to warn king at start of turn if check? or merge it into another function?
+	//king.kingWarningSelected();
 	
 /**
  * Creates a duplicate of the current chessboard to play the move and check if it
@@ -119,9 +121,9 @@ public class Rule {
 			for (int x = 0; x < 8; x++) {
 				if (chessBoard.getBoard()[y][x].getMoveSelected()) {					
 					ChessBoard tempBoard = new ChessBoard(chessBoard);
-					tempBoard.getBoard()[y][x].setPiece(tempBoard.getBoard()[row][col].getPiece());
+					tempBoard.getBoard()[y][x].setTestPiece(tempBoard.getBoard()[row][col].getPiece());
 					
-					tempBoard.getBoard()[row][col].setPiece(null);
+					tempBoard.getBoard()[row][col].setTestPiece(null);
 					boolean safe = tempBoard.getRule().checkKing();
 					if (!safe) {
 						chessBoard.getBoard()[y][x].resetSelected();
@@ -186,7 +188,6 @@ public class Rule {
 			System.out.println("Warning King is null!");
 		}
 		if (king != null && king.getMoveSelected()) {
-			king.kingWarningSelected();
 			safe = false;
 		}
 		//unselectAll();

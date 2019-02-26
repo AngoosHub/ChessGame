@@ -30,6 +30,16 @@ public class Queen extends Piece {
 		getFile();
 		createPiece();
 	}
+	
+	/**
+	 * Creates a test version of the piece skipping processing image file.
+	 * @param playerNum
+	 * @param test
+	 */
+	public Queen(int playerNum, String test) {
+		pieceName = "Queen";
+		player = playerNum;
+	}
 
 	/**
 	 * Builds the piece using a chess image.
